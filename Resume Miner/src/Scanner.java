@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+// Developer : Roshan Shetty
 
 ///The Scanner class is used to check all the filenames in the data store and return a <Map> //
 public class Scanner {
@@ -14,8 +15,12 @@ public class Scanner {
 	// the HashMap will save filenames and last modified as a <key,value> pair.
 	// the <key,value> pair will be used to decide whether to index content of a file again or not
 	
+	
+	
 	private HashMap<String,Long> filesInFolder = new HashMap<String, Long>(); 
 	private HashMap<String,Long> filesInIndexFile = new HashMap<String, Long>(); 
+	private static String  indexFile = "C:/Users/Pareshan/Documents/Roshan MS/Second Semester Spring 2016/Information Systems/Project - Resume Mining/Programs/index file/index.txt";
+	private static String datastore = "C:/Users/Pareshan/Downloads"; 
 	
 	 public void listFilesInFolder(File folder) {
 		  
@@ -23,6 +28,7 @@ public class Scanner {
 	    	 
 	         if (fileEntry.isDirectory()) {
 	        	 listFilesInFolder(fileEntry);
+	        	 
 	         } else {
 	        	 filesInFolder.put(fileEntry.getName(), fileEntry.lastModified());
 	            
@@ -31,6 +37,8 @@ public class Scanner {
 	 }
 
 	 
+	
+	 // this function will compare both the current file index and the previously scanned file index to check for recently added files.
 	 public void compareIndexes()
 	 {
 		 for(Entry<String, Long> filename: filesInFolder.entrySet())
@@ -48,6 +56,7 @@ public class Scanner {
 		 }
 	 }
 	 
+	 // this function will compare both the current file index and the previously scanned file index to check for recently deleted files.
 	 public void checkForDeletedFiles()
 	 {
 		 for(Entry<String, Long> filename: filesInIndexFile.entrySet())
@@ -66,6 +75,8 @@ public class Scanner {
 		 }
 		 
 	 }
+	 
+	 //This function displays the current files in the data store. Not used currently, but can be used for debugging. 
 	 public void displayMap()
 	 {
 		 for(Entry<String, Long> filename: filesInFolder.entrySet())
@@ -79,13 +90,14 @@ public class Scanner {
 		 
 	 }
 	 
+	 // this function creates , updates and stores the index file.
 	 public void saveMap()
 	 {
 		 
 		 try {
 
 			 	
-				File file = new File("C:/Users/Pareshan/Documents/Roshan MS/Second Semester Spring 2016/Information Systems/Project - Resume Mining/Programs/index file/index.txt");
+				File file = new File(indexFile);
 
 				// if file doesn't exists, then create it
 				if (!file.exists()) {
@@ -114,6 +126,7 @@ public class Scanner {
 		 
 	 }
 
+	 // this function checks for modified files.
 	 public void compareMap(String keyInFile, Long valueInFile)
 	 {
 		 
@@ -141,7 +154,7 @@ public class Scanner {
 
 				String sCurrentLine;
 
-				br = new BufferedReader(new FileReader("C:/Users/Pareshan/Documents/Roshan MS/Second Semester Spring 2016/Information Systems/Project - Resume Mining/Programs/index file/index.txt"));
+				br = new BufferedReader(new FileReader(indexFile));
 
 				while ((sCurrentLine = br.readLine()) != null) {
 					
@@ -166,15 +179,17 @@ public class Scanner {
 			}
 	 }
 	 
+	//Starter Class 
 	public static void main(String Args[])
 	{
-		
-		File folder = new File("C:/Users/Pareshan/Downloads");
+		long startTime = System.nanoTime();
+		// Data Store location
+		File folder = new File(datastore);
 		Scanner obj1 = new Scanner();
 		obj1.listFilesInFolder(folder);
 		
-		
-		File file = new File("C:/Users/Pareshan/Documents/Roshan MS/Second Semester Spring 2016/Information Systems/Project - Resume Mining/Programs/index file/index.txt");
+		// checking for index file already present.
+		File file = new File(indexFile);
 		// if file doesn't exists, then create it
 		if (file.exists()) {
 			obj1.readFile();	
@@ -184,9 +199,9 @@ public class Scanner {
 		
 		//System.out.println("Indexing algorithm will run");
 		obj1.saveMap();
-		
-		
-		
+		long endTime = System.nanoTime();
+		System.out.println("Took "+(endTime - startTime) + " ns"); 
+		System.out.println("Took "+(endTime - startTime)/ 1000000000.0 + " s");		
 	}
 
 }// end of class
